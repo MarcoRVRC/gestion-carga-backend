@@ -13,7 +13,6 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 public class AdSolicitudMG implements Serializable {
-
     @Id
     @Column(name = "id_solicitud_mg")
     private String id_solicitud_mg;
