@@ -43,4 +43,5 @@ public class AdSolicitudGeneral implements Serializable {
     @Column(name="id_documento")
     private String id_documento;
 
+
 }

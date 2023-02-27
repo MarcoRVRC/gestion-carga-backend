@@ -1,11 +1,18 @@
+--Esquema de prueba en local
+--CREATE  SCHEMA sat_aduanas_gestion_electronica ; 
+select * from sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general agesg 
 
+select * from sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_manifiesto_generado agesmg 
 
+select * from sat_aduanas_gestion_electronica.secuencia_solicitud
+
+create sequence sat_aduanas_gestion_electronica.secuencia_solicitud
+  minvalue 0
+  maxvalue 999999
+increment by 1;
 --Tabla que generaliza las solicitudes de carta de correcion y manifiesto generado
 --contiene atributos comunes entre los dos tipos de solicitud
  
-CREATE  SCHEMA sat_aduanas_gestion_electronica ; 
-
-
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
 (
 	id_solicitud varchar(11)not null unique, --M EA 23 000111
@@ -14,14 +21,14 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 	fecha_creacion timestamp default current_timestamp,
 	nit_usuario_revision varchar(15), --nit usuario revisa y aprueba o rechaza
 	fecha_revision timestamp ,
-	id_aduana int not null,
+	id_aduana int not null, --es codigo de la aduana
 	es_perecedero boolean not null, --0 no es perecedero, 1 es perecedero
 	--observaciones varchar(),
 	id_documento varchar(128),--ubicacion de la carpeta del archivo
 	constraint pk_solicitudes_general
 	primary key(id_solicitud)
 );
-
+--MEA12000022 
 --ALTER TABLE sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general  
 --ADD COLUMN perecedero boolean;
 
@@ -34,6 +41,12 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 
 --ALTER TABLE sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
 --RENAME COLUMN idDocumento TO id_documento;
+
+--ALTER TABLE sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general 
+--DROP COLUMN nit_usuario_revision;
+
+--ALTER TABLE sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general  
+--ADD COLUMN nit_usuario_revision varchar(15);
 
 --tabla de solicitudes de manifiesto generado
 
