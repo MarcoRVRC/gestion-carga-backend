@@ -48,6 +48,7 @@ add constraint uq_correlativo_solicitud_general  unique(correlativo);
 --RENAME COLUMN perecedero TO es_perecedero;
 
 --ALTER TABLE sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
+
 --RENAME COLUMN idDocumento TO id_documento;
 
 --ALTER TABLE sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general 
@@ -170,74 +171,6 @@ add constraint fk_detalle_solicitud_id_solicitud foreign key(correlativo_solicit
 references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
 
 
-
-#------------------------------------------------
-
-select  s.id_solicitud as id,
-		(ts.tipo_solicitud ||'-'|| s.codigo_aduana ||'-'||
-		cast(s.anio as varchar) ||'-'|| cast(s.secuencia as varchar)) as noSolicitud,
-		
-			ts.actividad_operacion as actividadOperacion,
-			s.nit_solicitante as nitSolicitante,
-		s.nit_representado as nitRepresentado
-	from 	sat_aduanas_aop.ad_aop_solicitud s
-	inner join sat_aduanas_aop.ad_aop_tipo_solicitud ts
-	on s.id_tipo_solicitud = ts.id_tipo_solicitud
-where s.estado = ?1 order by s.id_solicitud asc
-	
-	
-
-
-CREATE OR REPLACE FUNCTION sat_aduanas_aop.secuencia_solicitud()
- RETURNS trigger
- LANGUAGE plpgsql
-AS $function$
-DECLARE
-V_SEC_TEMP INTEGER := 0;
-V_SEC_ORIG INTEGER := 0;
-
-V_SECUENCIA	INTEGER:=	0;
-V_ANIO		INTEGER:=   0;
-BEGIN
-	
-	SELECT 	EXTRACT(YEAR FROM current_date)
-	INTO	V_ANIO;	
-	
-	SELECT 	COALESCE(MAX(SECUENCIA), 0)
-	INTO	V_SEC_TEMP
-	FROM 	SAT_ADUANAS_AOP.AD_AOP_HISTORICO_SOLICITUD
-	WHERE 	CODIGO_ADUANA = NEW.CODIGO_ADUANA
-	AND		ANIO = V_ANIO;
-	
-	SELECT 	COALESCE(MAX(SECUENCIA), 0)
-	INTO	V_SEC_ORIG
-	FROM 	SAT_ADUANAS_AOP.AD_AOP_SOLICITUD
-	WHERE 	CODIGO_ADUANA = NEW.CODIGO_ADUANA
-	AND		ANIO = V_ANIO;
-	
-	IF ( V_SEC_TEMP > V_SEC_ORIG) THEN
-	 V_SECUENCIA:= V_SEC_TEMP;	
-	ELSIF( V_SEC_ORIG > V_SEC_TEMP ) THEN	
-		V_SECUENCIA:= V_SEC_ORIG;
-	END IF;
-
-	NEW.SECUENCIA := V_SECUENCIA + 1;
-	NEW.ANIO = V_ANIO;
-	RETURN NEW;
-	
-	EXCEPTION
-		WHEN NO_DATA_FOUND THEN
-			V_SECUENCIA:= 0;
-		
-		NEW.SECUENCIA := V_SECUENCIA + 1;
-		NEW.ANIO = V_ANIO;
-		RETURN NEW;	
-	
-END;
-$function$
-;
-
-
 #------------------FUNCIONES
 
 select * from sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general agesg
@@ -269,3 +202,40 @@ $$ LANGUAGE plpgsql;
 select ('M'|| '-' ||   sg.id_aduana ||'-' || SUBSTRING(cast( EXTRACT(YEAR FROM fecha_creacion) as varchar ), 3, 4) 
 		||'-' || sg.id_solicitud) as id_solicitud, nit_usuario_creacion, fecha_creacion, es_perecedero
 from sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general sg;
+
+
+#--correlativo de solicitud
+
+CREATE OR REPLACE FUNCTION sat_aduanas_gestion_electronica.generar_secuencia()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+V_SECUENCIA	INTEGER:=	0;
+V_ANIO		INTEGER:=   0;
+BEGIN
+	
+	SELECT 	EXTRACT(YEAR FROM current_date)
+	INTO	V_ANIO;
+	
+	SELECT 	COALESCE(MAX(CORRELATIVO_TURNO), 0)
+	INTO	V_SECUENCIA
+	FROM 	SAT_ADUANAS_AOP.AD_AOP_TURNOS
+	WHERE 	CODIGO_ADUANA = NEW.CODIGO_ADUANA
+	AND		ANIO = V_ANIO;
+
+	NEW.CORRELATIVO_TURNO := V_SECUENCIA + 1;
+	NEW.ANIO = V_ANIO;
+	RETURN NEW;
+	
+	EXCEPTION
+		WHEN NO_DATA_FOUND THEN
+			V_SECUENCIA:= 0;
+		
+		NEW.CORRELATIVO_TURNO := V_SECUENCIA + 1;
+		NEW.ANIO = V_ANIO;
+		RETURN NEW;	
+	
+END;
+$function$
+;
