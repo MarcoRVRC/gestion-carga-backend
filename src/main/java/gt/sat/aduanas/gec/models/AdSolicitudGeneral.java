@@ -15,11 +15,11 @@ public class AdSolicitudGeneral implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_solicitud", unique=true)
+    //@Column(name = "id_solicitud")
     private Integer id_solicitud;
 
-    @Column(name = "correlativo", insertable = false)
-    private Integer correlativo;
+    @Column(name = "correlativo")
+    private String correlativo;
 
     @Column(name="process_id")
     private String idProcess;

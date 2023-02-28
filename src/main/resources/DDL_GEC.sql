@@ -1,3 +1,19 @@
+--Host
+--ec2-54-157-79-121.compute-1.amazonaws.com
+--Database
+--d2ave1aegnp7r0
+--User
+--cvwsmlfkqbbbqo
+--Port
+--5432
+--Password
+--da3c736be46e1779b07f39a999e6ec5604218f3ac98be1ebff343f07305e9202
+--URI
+--postgres://cvwsmlfkqbbbqo:da3c736be46e1779b07f39a999e6ec5604218f3ac98be1ebff343f07305e9202@ec2-54-157-79-121.compute-1.amazonaws.com:5432/d2ave1aegnp7r0
+--Heroku CLI
+--heroku pg:psql postgresql-tapered-82083 --app pruebasat
+
+
 --Esquema de prueba en local
 --CREATE  SCHEMA sat_aduanas_gestion_electronica ; 
 select * from sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general agesg 
@@ -28,11 +44,12 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 	es_perecedero boolean not null, --0 no es perecedero, 1 es perecedero
 	id_documento varchar(128),--ubicacion de la carpeta del archivo
 	constraint pk_solicitudes_general
-	primary key(correlativo)
+	primary key(id_solicitud)
 );
 
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
 add constraint uq_correlativo_solicitud_general  unique(correlativo);
+
 
 --alter table  sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
 --add column id_secuencia numeric(6)
@@ -62,7 +79,8 @@ add constraint uq_correlativo_solicitud_general  unique(correlativo);
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_manifiesto_generado
 (
 	id_solicitud_mg integer generated always as identity(start with 1 increment by 1),
-	correlativo_solicitud varchar(20),
+	--correlativo_solicitud varchar(20),
+	correlativo_solicitud integer,
 	id_tipo_mercancias int not null,
 	id_motivo_peticion int not null,
 	no_manifiesto varchar(60),
@@ -76,7 +94,7 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_manifiesto_generado
 add constraint fk_correlativo_solicitud_mg foreign key(correlativo_solicitud)
-references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(id_solicitud);
 
 --tabla donde se insertan los registros de 'otra razon de peticion'
 --si el usuario selecciona la opcion de 'otros'
@@ -84,7 +102,8 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 (
 	id_detalle_razon integer generated 
 	always as identity(start with 1 increment by 1),
-	correlativo_solicitud varchar(20),
+	--correlativo_solicitud varchar(20),
+	correlativo_solicitud integer,
 	razon_peticion varchar(1000)not null,
 	constraint pk_detalle_razon_peticion
 	primary key(id_detalle_razon)
@@ -92,7 +111,7 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_razon_peticion
 add constraint fk_detalle_razon_id_solicitud foreign key(correlativo_solicitud)
-references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(id_solicitud);
 
 --tabla que contendra los catalogos transversales de ambas solicitudes,
 --asi como los transversales de toda la miad
@@ -116,7 +135,8 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_bitacora_estados
 (
 	id_bitacora_estado integer generated always as identity(start with 1 increment by 1),
-	correlativo_solicitud varchar(20) not null,
+	--correlativo_solicitud varchar(20) not null,
+	correlativo_solicitud integer,
 	id_estado int not null, --de la tabla de catalogo
 	nit_usuario_creo varchar(15) not null,
 	fecha_creacion timestamp default current_timestamp,
@@ -126,7 +146,7 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 );
 
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_bitacora_estados add constraint fk_id_solicitud_cce
-foreign key(correlativo_solicitud) references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
+foreign key(correlativo_solicitud) references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(id_solicitud);
 
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_bitacora_estados add constraint fk_id_estado_cce
 foreign key(id_estado) references sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos(id_catalogo);
@@ -137,15 +157,17 @@ foreign key(id_estado) references sat_aduanas_gestion_electronica.ad_gestion_ele
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_cce
 (
 	id_solicitud_cce integer generated always as identity(start with 1 increment by 1),
-	correlativo_solicitud varchar(20), 
+	--correlativo_solicitud varchar(20), 
+	id_solicitud integer,
 	no_Manifiesto varchar(60)  not null,
 	justificacion varchar(1000) not null,
+	no_docto_transporte varchar(60),
 	constraint pk_solicitud_cce primary key(id_solicitud_cce)
 ); 
 
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_cce
-add constraint fk_correlativo_solicitud_cce foreign key(correlativo_solicitud)
-references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
+add constraint fk_correlativo_solicitud_cce foreign key(id_solicitud)
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(id_solicitud);
 
  --alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_cce
  --add constraint UC_id_solicitud unique(id_solicitud);
@@ -157,7 +179,8 @@ references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_ge
  create table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_solicitud
 (
  id_detalle_solicitud integer generated always as identity(start with 1 increment by 1),
- correlativo_solicitud varchar(20),
+ --correlativo_solicitud varchar(20),
+ id_solicitud integer,
  nombre_campo varchar(150)  not null,
  valor_anterior varchar(150) not null ,
  valolr_actual varchar(150) not null,
@@ -167,8 +190,8 @@ references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_ge
 );   
   
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_solicitud
-add constraint fk_detalle_solicitud_id_solicitud foreign key(correlativo_solicitud)
-references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
+add constraint fk_detalle_solicitud_id_solicitud foreign key(id_solicitud)
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(id_solicitud);
 
 
 #------------------FUNCIONES

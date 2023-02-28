@@ -22,10 +22,10 @@ public class AdSolicitudesCceController {
     public ResponseEntity<AdSolicitudesCce> guardar(@RequestBody AdSolicitudesCce adSolicitudesCce) {
        return ResponseEntity.ok( adSolicitudCceService.guardar(adSolicitudesCce));
     }
-
+/*
     @GetMapping("/buscarPorId/{idSolicitud}")
-    public ResponseEntity<AdSolicitudGeneral> buscarPorId(@PathVariable("idSolicitud") Integer idSolicitud) {
+    public ResponseEntity<AdSolicitudGeneral> buscarPorId(@PathVariable("idSolicitud") String idSolicitud) {
         return ResponseEntity.ok(adSolicitudGeneralService.buscarPorId(idSolicitud));
-    }
+    } */
 
 }

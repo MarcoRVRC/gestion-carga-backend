@@ -19,8 +19,6 @@ public class AdSolicitudMGServiceImpl implements AdSolicitudMGService {
         return adSolicitudMGRepository.save(adSolicitudMG);
     }
 
-    @Override
-    public Optional<AdSolicitudMG> buscarPorId(String idSolicitud) {
-        return adSolicitudMGRepository.findById(idSolicitud);
-    }
+
+
 }
