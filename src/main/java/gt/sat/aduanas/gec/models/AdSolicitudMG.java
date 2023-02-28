@@ -13,9 +13,14 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 public class AdSolicitudMG implements Serializable {
+
     @Id
     @Column(name = "id_solicitud_mg")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id_solicitud_mg;
+
+    @Column(name = "correlativo_solicitud", insertable = false)
+    private String correlativo_solicitud;
 
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "id_solicitud")

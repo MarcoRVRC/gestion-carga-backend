@@ -24,7 +24,7 @@ public class AdSolicitudesCceController {
     }
 
     @GetMapping("/buscarPorId/{idSolicitud}")
-    public ResponseEntity<AdSolicitudGeneral> buscarPorId(@PathVariable("idSolicitud") String idSolicitud) {
+    public ResponseEntity<AdSolicitudGeneral> buscarPorId(@PathVariable("idSolicitud") Integer idSolicitud) {
         return ResponseEntity.ok(adSolicitudGeneralService.buscarPorId(idSolicitud));
     }
 

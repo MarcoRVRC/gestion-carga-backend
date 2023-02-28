@@ -14,13 +14,13 @@ import javax.persistence.*;
 public class AdDetalleRazonPeticionMG {
 
     @Id
-    @Column(name = "id_detalle_razon")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_detalle_razon_peticion;
+    @Column(name = "id_detalle_razon")
+    private Integer id_detalle_razon_peticion;
 
-   /* @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "id_solicitud_mg")*/
-    private String idSolicitudMG;
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "id_solicitud")
+    private AdSolicitudGeneral id_solicitud;
 
     private String razon_peticion;
 }

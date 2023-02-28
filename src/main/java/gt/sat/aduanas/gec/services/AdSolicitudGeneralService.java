@@ -7,6 +7,6 @@ public interface AdSolicitudGeneralService  {
 
     AdSolicitudGeneral guardar  (AdSolicitudGeneral adSolicitudGeneral);
 
-    AdSolicitudGeneral buscarPorId (String idSolicitud);
+    AdSolicitudGeneral buscarPorId (Integer idSolicitud);
 
 }

@@ -20,7 +20,7 @@ public class AdDetalleRazonPeticionMGServiceImpl implements AdDetalleRazonPetici
     }
 
     @Override
-    public Optional<AdDetalleRazonPeticionMG> buscarPorId(Long idDetalleRazonPeticion) {
+    public Optional<AdDetalleRazonPeticionMG> buscarPorId(int idDetalleRazonPeticion) {
         return adDetalleRazonPeticionMGRepository.findById(idDetalleRazonPeticion);
     }
 }

@@ -17,7 +17,7 @@ public class AdSolicitudGeneralServiceImpl implements AdSolicitudGeneralService 
     }
 
     @Override
-    public AdSolicitudGeneral buscarPorId(String idSolicitud) {
+    public AdSolicitudGeneral buscarPorId(Integer idSolicitud) {
         return adSolicitudGeneralRepository.findById(idSolicitud).orElse(null);
     }
 }

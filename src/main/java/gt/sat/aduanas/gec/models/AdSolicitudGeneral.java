@@ -14,10 +14,14 @@ import java.util.Date;
 public class AdSolicitudGeneral implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_solicitud", unique=true)
-    private String idSolcitud;
+    private Integer id_solicitud;
 
-    @Column(name="process_id", nullable = false)
+    @Column(name = "correlativo", insertable = false)
+    private Integer correlativo;
+
+    @Column(name="process_id")
     private String idProcess;
 
     @Column(name="nit_usuario_creacion", nullable = false, updatable = false)
@@ -42,6 +46,5 @@ public class AdSolicitudGeneral implements Serializable {
 
     @Column(name="id_documento")
     private String id_documento;
-
 
 }
