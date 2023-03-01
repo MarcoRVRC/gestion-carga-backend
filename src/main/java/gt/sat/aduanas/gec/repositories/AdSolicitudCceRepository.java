@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AdSolicitudCceRepository extends CrudRepository<AdSolicitudesCce, Integer> {
+public interface AdSolicitudCceRepository extends CrudRepository<AdSolicitudesCce, String> {
 }
