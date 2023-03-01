@@ -19,8 +19,8 @@ public class AdDetalleRazonPeticionMG {
     private Integer id_detalle_razon_peticion;
 
     @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "id_solicitud")
-    private AdSolicitudGeneral id_solicitud;
+    @JoinColumn(name = "correlativo_solicitud")
+    private AdSolicitudGeneral correlativo_solicitud;
 
     private String razon_peticion;
 }

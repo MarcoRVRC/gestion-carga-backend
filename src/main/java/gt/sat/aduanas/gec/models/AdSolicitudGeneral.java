@@ -41,8 +41,8 @@ public class AdSolicitudGeneral implements Serializable {
     @Column(name="es_perecedero", nullable=false)
     private boolean esPerecedero;
 
-    @Column(name="id_aduana", nullable=false)
-    private int idAduana;
+    @Column(name="codigo_aduana", nullable=false)
+    private String codigo_aduana;
 
     @Column(name="id_documento")
     private String id_documento;

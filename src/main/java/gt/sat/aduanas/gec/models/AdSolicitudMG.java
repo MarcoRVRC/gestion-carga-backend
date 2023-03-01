@@ -19,8 +19,6 @@ public class AdSolicitudMG implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_solicitud_mg;
 
-
-
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "correlativo_solicitud")
     private AdSolicitudGeneral correlativo;

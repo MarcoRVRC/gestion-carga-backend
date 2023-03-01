@@ -21,10 +21,18 @@ public class AdSolicitudMGController {
     private AdDetalleRazonPeticionMGService adDetalleRazonPeticionMGService;
 
     @PostMapping("/guardar")
-    public ResponseEntity<AdSolicitudMG> guardar(@RequestBody AdSolicitudMG adSolicitudMG) {
+    public ResponseEntity<AdSolicitudMG> guardar(@RequestBody AdSolicitudMG adSolicitudMG,  Optional<String> detalleRazon) {
+
         AdSolicitudMG obj = adSolicitudMGService.guardar(adSolicitudMG);
+        final AdDetalleRazonPeticionMG detalle = new AdDetalleRazonPeticionMG();
+
         if(obj != null) {
-           //adDetalleRazonPeticionMGService.guardar(adDetalleRazonPeticionMG);
+            if(detalleRazon.isPresent()){
+                detalle.setCorrelativo_solicitud(obj.getCorrelativo());
+
+                detalle.setRazon_peticion(detalleRazon.get());
+                adDetalleRazonPeticionMGService.guardar(detalle);
+            }
             return ResponseEntity.ok(obj);
         }
         return ResponseEntity.internalServerError().build();
@@ -36,7 +44,7 @@ public class AdSolicitudMGController {
         if(obj != null) {
             return ResponseEntity.ok(obj);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.internalServerError().build();
     }
 
 }

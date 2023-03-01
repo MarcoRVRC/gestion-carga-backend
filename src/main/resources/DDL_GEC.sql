@@ -40,7 +40,7 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 	fecha_creacion timestamp default current_timestamp,
 	nit_usuario_revision varchar(15), --nit usuario revisa y aprueba o rechaza
 	fecha_revision timestamp ,
-	id_aduana int not null, --es codigo de la aduana
+	codigo_aduana varchar(2)not null,
 	es_perecedero boolean not null, --0 no es perecedero, 1 es perecedero
 	id_documento varchar(128),--ubicacion de la carpeta del archivo
 	constraint pk_solicitudes_general
@@ -183,7 +183,7 @@ references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_ge
  id_solicitud integer,
  nombre_campo varchar(150)  not null,
  valor_anterior varchar(150) not null ,
- valolr_actual varchar(150) not null,
+ valor_actual varchar(150) not null,
  necesita_autorizacion boolean,
  constraint pk_detalle_solicitud_cce
  primary key(id_detalle_solicitud)
@@ -191,8 +191,11 @@ references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_ge
   
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_solicitud
 add constraint fk_detalle_solicitud_id_solicitud foreign key(id_solicitud)
-references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(id_solicitud);
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_cce(id_solicitud_cce);
 
+
+--ALTER TABLE sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_solicitud 
+--RENAME COLUMN valolr_actual TO valor_actual;
 
 #------------------FUNCIONES
 
