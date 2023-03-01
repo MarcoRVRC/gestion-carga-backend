@@ -1,3 +1,144 @@
+---------------------SCRIPT FUNCIONAL-----------------------------------------------------------------------------------
+
+create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
+(
+	correlativo varchar(20), 
+	process_id varchar(16),
+	nit_usuario_creacion varchar(15)not null, 
+	fecha_creacion timestamp default current_timestamp,
+	nit_usuario_revision varchar(15), 
+	fecha_revision timestamp ,
+	codigo_aduana varchar(2)not null,
+	es_perecedero boolean not null, 
+	id_documento varchar(128),
+	constraint pk_solicitudes_general
+	primary key(correlativo)
+);
+
+create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_manifiesto_generado
+(
+	id_solicitud_mg integer generated always as identity(start with 1 increment by 1),
+	correlativo_solicitud varchar(20),
+	id_tipo_mercancias int not null,
+	id_motivo_peticion int not null,
+	no_manifiesto varchar(60),
+	no_documento_transporte varchar(60),
+	no_contenedor varchar(11),
+	no_orden_declaracion varchar(16),
+	no_vin varchar(60),
+	constraint pk_solicitudes_manifiesto_generado
+	primary key(id_solicitud_mg)
+);
+
+alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_manifiesto_generado
+add constraint fk_correlativo_solicitud_mg foreign key(correlativo_solicitud)
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
+
+--Tabla que almacena otras razones de peticion de manifiesto generado
+
+create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_razon_peticion
+(
+	id_detalle_razon integer generated 
+	always as identity(start with 1 increment by 1),
+	correlativo_solicitud varchar(20),
+	razon_peticion varchar(1000)not null,
+	constraint pk_detalle_razon_peticion
+	primary key(id_detalle_razon)
+);
+
+alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_razon_peticion
+add constraint fk_detalle_razon_id_solicitud foreign key(correlativo_solicitud)
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
+
+
+create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos
+(
+	id_catalogo integer generated always 
+	as identity(start with 1 increment by 1),
+	codigo_catalogo varchar(8),
+	nombre_catalogo varchar(64)not null,
+	descripcion_catalogo varchar(64)not null,
+	fecha_creacion timestamp default current_timestamp,
+	fecha_modificacion timestamp default current_timestamp,
+	login_creacion varchar(8),
+	login_modificacion varchar(8),
+	constraint pk_catalogos 
+	primary key(id_catalogo)
+);
+
+
+#----CCE----------------------------------------------------------------------------
+
+
+create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_cce
+(
+	id_solicitud_cce integer generated always as identity(start with 1 increment by 1),
+	correlativo_solicitud varchar(20), 
+	no_Manifiesto varchar(60)  not null,
+	justificacion varchar(1000) not null,
+	no_docto_transporte varchar(60),
+	constraint pk_solicitud_cce primary key(id_solicitud_cce)
+); 
+
+alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_cce
+add constraint fk_correlativo_solicitud_cce foreign key(correlativo_solicitud)
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(correlativo);
+
+ 
+ create table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_solicitud
+(
+ id_detalle_solicitud integer generated always as identity(start with 1 increment by 1),
+ correlativo_solicitud varchar(20),
+ nombre_campo varchar(150)  not null,
+ valor_anterior varchar(150) not null ,
+ valor_actual varchar(150) not null,
+ necesita_autorizacion boolean,
+ constraint pk_detalle_solicitud_cce
+ primary key(id_detalle_solicitud)
+);   
+  
+alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_solicitud
+add constraint fk_detalle_solicitud_id_solicitud foreign key(correlativo_solicitud)
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_cce(correlativo);
+
+
+
+
+ create table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_solicitud
+(
+ id_detalle_solicitud integer generated always as identity(start with 1 increment by 1),
+ id_solicitud_cce integer,
+ nombre_campo varchar(150)  not null,
+ valor_anterior varchar(150) not null ,
+ valor_actual varchar(150) not null,
+ necesita_autorizacion boolean,
+ constraint pk_detalle_solicitud_cce
+ primary key(id_detalle_solicitud)
+);   
+
+  
+alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_detalle_solicitud
+add constraint fk_detalle_solicitud_id_solicitud foreign key(id_solicitud_cce)
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_cce(id_solicitud_cce);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------AQUI TERMINA EL SCRIPT FUNCIONAL-------------
+
 --Host
 --ec2-54-157-79-121.compute-1.amazonaws.com
 --Database
@@ -47,8 +188,8 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 	primary key(id_solicitud)
 );
 
-alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
-add constraint uq_correlativo_solicitud_general  unique(correlativo);
+--alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
+--add constraint uq_correlativo_solicitud_general  unique(correlativo);
 
 
 --alter table  sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
@@ -244,7 +385,7 @@ BEGIN
 	SELECT 	EXTRACT(YEAR FROM current_date)
 	INTO	V_ANIO;
 	
-	SELECT 	COALESCE(MAX(CORRELATIVO_TURNO), 0)
+	SELECT 	COALESCE(MAX(correlativo), 0)
 	INTO	V_SECUENCIA
 	FROM 	SAT_ADUANAS_AOP.AD_AOP_TURNOS
 	WHERE 	CODIGO_ADUANA = NEW.CODIGO_ADUANA
