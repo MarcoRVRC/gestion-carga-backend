@@ -13,13 +13,13 @@ import java.util.Date;
 @Getter @Setter @NoArgsConstructor
 public class AdSolicitudGeneral implements Serializable {
 
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@Column(name = "id_solicitud")
-    private Integer id_solicitud;*/
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Column(name = "id_solicitud_g")
+    private Integer id_solicitud_g;
+
     @Column(name = "correlativo")
-    private String correlativo;
+    private Integer correlativo;
 
     @Column(name="process_id")
     private String idProcess;
@@ -47,4 +47,6 @@ public class AdSolicitudGeneral implements Serializable {
     @Column(name="id_documento")
     private String id_documento;
 
+    @Column(name="id_estado", insertable = false, columnDefinition = "int default 1")
+    private int id_estado;
 }

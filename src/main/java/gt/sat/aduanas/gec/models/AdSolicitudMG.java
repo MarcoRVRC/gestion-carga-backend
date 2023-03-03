@@ -15,13 +15,12 @@ import java.io.Serializable;
 public class AdSolicitudMG implements Serializable {
 
     @Id
-   // @Column(name = "id_solicitud_mg")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_solicitud_mg;
 
     @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "correlativo_solicitud")
-    private AdSolicitudGeneral correlativo;
+    @JoinColumn(name = "id_solicitud_g")
+    private AdSolicitudGeneral id_solicitud_g;
 
     private int id_tipo_mercancias;
 

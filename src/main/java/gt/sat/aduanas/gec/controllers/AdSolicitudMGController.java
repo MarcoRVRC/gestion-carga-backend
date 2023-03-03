@@ -28,7 +28,7 @@ public class AdSolicitudMGController {
 
         if(obj != null) {
             if(detalleRazon.isPresent()){
-                detalle.setCorrelativo_solicitud(obj.getCorrelativo());
+                detalle.setId_solicitud_g(obj.getId_solicitud_g());
 
                 detalle.setRazon_peticion(detalleRazon.get());
                 adDetalleRazonPeticionMGService.guardar(detalle);
