@@ -17,8 +17,8 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 	id_catalogo integer generated always 
 	as identity(start with 1 increment by 1),
 	codigo_catalogo integer,
-	nombre_catalogo varchar(64)not null,
-	descripcion_catalogo varchar(64)not null,
+	nombre_catalogo varchar(255)not null,
+	descripcion_catalogo varchar(128)not null,
 	fecha_creacion timestamp default current_timestamp,
 	fecha_modificacion timestamp default current_timestamp,
 	login_creacion varchar(8),
@@ -168,6 +168,8 @@ foreign key(id_estado) references sat_aduanas_gestion_electronica.ad_gestion_ele
 
 ------------------FUNCIONES----------------------------------------------------
 
+
+-----------OBTENER CORRELATIVO-------------------------------------------------
 CREATE OR REPLACE FUNCTION sat_aduanas_gestion_electronica.generar_secuencia()
  RETURNS trigger
  LANGUAGE plpgsql
@@ -200,6 +202,7 @@ $function$;
 
 ------TGR
 
+-----------OBTENER CORRELATIVO-------------------------------------------------
 create or replace function sat_aduanas_gestion_electronica.generar_secuencia() RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
