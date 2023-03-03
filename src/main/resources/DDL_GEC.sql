@@ -1,11 +1,22 @@
 
 ---------------------SCRIPT DDL-----------------------------------------------------------------------------------
 
+create table if not exists sat_aduanas_gestion_electronica.ad_gec_tipo_catalogo
+(
+	id_tipo_catalogo integer generated always as identity(start with 1 increment by 1),
+	nombre varchar(16) not null,
+	login_creo varchar(10) not null,
+	fecha_creacion timestamp default current_timestamp,
+	fecha_modificacion timestamp default current_timestamp,
+	login_modifico varchar(10) not null,
+	constraint pk_tipo_catalogos primary key(id_tipo_catalogo)
+);
+
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos
 (
 	id_catalogo integer generated always 
 	as identity(start with 1 increment by 1),
-	codigo_catalogo varchar(8),
+	codigo_catalogo integer,
 	nombre_catalogo varchar(64)not null,
 	descripcion_catalogo varchar(64)not null,
 	fecha_creacion timestamp default current_timestamp,
@@ -16,11 +27,16 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 	primary key(id_catalogo)
 );
 
+alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos  add constraint fk_tipo_catalogos
+foreign key(codigo_catalogo) references sat_aduanas_gestion_electronica.ad_gec_tipo_catalogo(id_tipo_catalogo);
+
+
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general --ad_gec_solicitudes_general
 (
 	id_solicitud_g integer generated always as identity(start with 1 increment by 1),
 	correlativo numeric(9), 
 	process_id varchar(16),
+	tipo_solicitud integer,
 	id_estado int not null default 1, --estado 1 == PA o el primer estado
 	nit_usuario_creacion varchar(15)not null, 
 	fecha_creacion timestamp default current_timestamp,
@@ -32,9 +48,15 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 	constraint pk_solicitudes_general
 	primary key(id_solicitud_g)
 );
-
+---fk a estados
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
 add constraint fk_id_estado_sol_general foreign key(id_estado) 
+references sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos(id_catalogo);
+
+--fk referencia a tipo de solicitudes
+alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
+add constraint fk_catalogo_estado_solicitud 
+foreign key(tipo_solicitud) 
 references sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos(id_catalogo);
 
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_manifiesto_generado
@@ -177,6 +199,55 @@ END;
 $function$;
 
 ------TGR
+
+create or replace function sat_aduanas_gestion_electronica.generar_secuencia() RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+V_TIPO integer:=0;
+V_SECUENCIA	INTEGER:=	0;
+V_ANIO integer:=0;
+begin 
+	
+	SELECT 	EXTRACT(YEAR FROM current_date)
+	INTO	V_ANIO;
+	
+	select sg.tipo_solicitud
+	into V_TIPO
+	from sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general sg
+	inner join sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos ct on  sg.tipo_solicitud = ct.id_catalogo
+	where tipo_solicitud = NEW.tipo_solicitud;
+
+	IF V_TIPO = 8 then
+			--CCE aduana, 
+			SELECT 	COALESCE(MAX(correlativo), 0)
+			INTO	V_SECUENCIA
+			FROM 	sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
+			WHERE 	tipo_solicitud = NEW.tipo_solicitud
+			AND		(SELECT EXTRACT(YEAR FROM fecha_creacion)) = V_ANIO;
+		
+	ELSIF V_TIPO = 9 THEN
+	    	SELECT 	COALESCE(MAX(correlativo), 0)
+			INTO	V_SECUENCIA
+			FROM 	sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
+			WHERE 	codigo_aduana = NEW.codigo_aduana 
+			AND		tipo_solicitud = NEW.tipo_solicitud
+			AND		(SELECT EXTRACT(YEAR FROM fecha_creacion)) = V_ANIO;
+
+	END IF;	
+
+		
+		NEW.correlativo := V_SECUENCIA + 1;
+			RETURN NEW;
+	-------
+	EXCEPTION
+		WHEN NO_DATA_FOUND THEN
+			V_SECUENCIA:= 0;
+		
+		NEW.correlativo := V_SECUENCIA + 1;
+		RETURN NEW;
+END;
+$function$;
 
 CREATE OR REPLACE TRIGGER obtener_correlativo BEFORE INSERT
 ON sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
