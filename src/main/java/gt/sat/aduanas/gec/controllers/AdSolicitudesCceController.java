@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/adSolicitudesCce")
 @CrossOrigin(origins = "*")
 public class AdSolicitudesCceController {
-    @Autowired
+   /* @Autowired
     private AdSolicitudCceService adSolicitudCceService;
 
     @Autowired
@@ -21,7 +21,7 @@ public class AdSolicitudesCceController {
     @PostMapping("/guardar")
     public ResponseEntity<AdSolicitudesCce> guardar(@RequestBody AdSolicitudesCce adSolicitudesCce) {
        return ResponseEntity.ok( adSolicitudCceService.guardar(adSolicitudesCce));
-    }
+    } */
 /*
     @GetMapping("/buscarPorId/{idSolicitud}")
     public ResponseEntity<AdSolicitudGeneral> buscarPorId(@PathVariable("idSolicitud") String idSolicitud) {

@@ -35,7 +35,4 @@ public class AdSolicitudMG implements Serializable {
     private String no_orden_declaracion;
 
     private String no_vin;
-
-
-
 }

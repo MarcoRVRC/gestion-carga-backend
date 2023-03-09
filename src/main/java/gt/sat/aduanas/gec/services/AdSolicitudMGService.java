@@ -8,4 +8,6 @@ public interface AdSolicitudMGService {
 
     AdSolicitudMG guardar(AdSolicitudMG adSolicitudMG);
 
+    Optional<AdSolicitudMG> buscarPorId(Integer idSolicitud);
+
 }

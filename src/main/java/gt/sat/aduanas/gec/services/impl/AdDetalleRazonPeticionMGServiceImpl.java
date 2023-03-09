@@ -18,9 +18,4 @@ public class AdDetalleRazonPeticionMGServiceImpl implements AdDetalleRazonPetici
     public AdDetalleRazonPeticionMG guardar(AdDetalleRazonPeticionMG adDetalleRazonPeticionMG) {
         return adDetalleRazonPeticionMGRepository.save(adDetalleRazonPeticionMG);
     }
-
-    @Override
-    public Optional<AdDetalleRazonPeticionMG> buscarPorId(int idDetalleRazonPeticion) {
-        return adDetalleRazonPeticionMGRepository.findById(idDetalleRazonPeticion);
-    }
 }

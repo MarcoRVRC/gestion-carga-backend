@@ -24,6 +24,10 @@ public class AdSolicitudGeneral implements Serializable {
     @Column(name="process_id")
     private String idProcess;
 
+    @Column(name="tipo_solicitud")
+    private Integer tipo_solicitud;
+
+
     @Column(name="nit_usuario_creacion", nullable = false, updatable = false)
     private String nitUsuarioCreacion;
 

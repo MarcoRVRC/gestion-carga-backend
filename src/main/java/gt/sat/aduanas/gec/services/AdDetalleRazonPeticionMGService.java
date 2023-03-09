@@ -9,5 +9,4 @@ public interface AdDetalleRazonPeticionMGService {
 
     AdDetalleRazonPeticionMG guardar(AdDetalleRazonPeticionMG adDetalleRazonPeticionMG);
 
-    Optional<AdDetalleRazonPeticionMG> buscarPorId(int idDetalleRazonPeticion);
 }

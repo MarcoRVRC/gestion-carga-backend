@@ -38,6 +38,11 @@ public class AdSolicitudMGController {
         return ResponseEntity.internalServerError().build();
     }
 
+    @GetMapping("/buscarPorId")
+    public ResponseEntity<Optional<AdSolicitudMG>> buscarPorId(@RequestParam("idSolicitud") Integer idSolicitud) {
+        return ResponseEntity.ok(adSolicitudMGService.buscarPorId(idSolicitud));
+    }
+/*
     @PostMapping("/guardarRazon")
     public ResponseEntity<AdDetalleRazonPeticionMG> guardarRazon(@RequestBody AdDetalleRazonPeticionMG adDetalleRazonPeticionMG) {
         AdDetalleRazonPeticionMG obj = adDetalleRazonPeticionMGService.guardar(adDetalleRazonPeticionMG);
@@ -45,6 +50,5 @@ public class AdSolicitudMGController {
             return ResponseEntity.ok(obj);
         }
         return ResponseEntity.internalServerError().build();
-    }
-
+    }*/
 }
