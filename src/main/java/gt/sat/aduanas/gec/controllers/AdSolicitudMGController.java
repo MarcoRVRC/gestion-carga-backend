@@ -2,12 +2,15 @@ package gt.sat.aduanas.gec.controllers;
 
 import gt.sat.aduanas.gec.models.AdDetalleRazonPeticionMG;
 import gt.sat.aduanas.gec.models.AdSolicitudMG;
+import gt.sat.aduanas.gec.models.AdCatalogos;
 import gt.sat.aduanas.gec.services.AdDetalleRazonPeticionMGService;
 import gt.sat.aduanas.gec.services.AdSolicitudMGService;
+import gt.sat.aduanas.gec.services.impl.AdCatalogosServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,6 +22,9 @@ public class AdSolicitudMGController {
     private AdSolicitudMGService adSolicitudMGService;
     @Autowired
     private AdDetalleRazonPeticionMGService adDetalleRazonPeticionMGService;
+
+    @Autowired
+    private AdCatalogosServiceImpl adCatalogosService;
 
     @PostMapping("/guardar")
     public ResponseEntity<AdSolicitudMG> guardar(@RequestBody AdSolicitudMG adSolicitudMG,  Optional<String> detalleRazon) {
@@ -42,13 +48,22 @@ public class AdSolicitudMGController {
     public ResponseEntity<Optional<AdSolicitudMG>> buscarPorId(@RequestParam("idSolicitud") Integer idSolicitud) {
         return ResponseEntity.ok(adSolicitudMGService.buscarPorId(idSolicitud));
     }
-/*
-    @PostMapping("/guardarRazon")
-    public ResponseEntity<AdDetalleRazonPeticionMG> guardarRazon(@RequestBody AdDetalleRazonPeticionMG adDetalleRazonPeticionMG) {
-        AdDetalleRazonPeticionMG obj = adDetalleRazonPeticionMGService.guardar(adDetalleRazonPeticionMG);
-        if(obj != null) {
-            return ResponseEntity.ok(obj);
+
+    @GetMapping("/listarTipoMercancia")
+    public ResponseEntity<List<AdCatalogos>> listarTipoMercancia() {
+        List<AdCatalogos> lista = adCatalogosService.listarTipoMercancia();
+        if(!lista.isEmpty()){
+            return ResponseEntity.ok(lista);
         }
         return ResponseEntity.internalServerError().build();
-    }*/
+    }
+
+    @GetMapping("/listarRazonPeticion")
+    public ResponseEntity<List<AdCatalogos>> listarRazonPeticion() {
+        List<AdCatalogos> lista = adCatalogosService.listarRazonPeticion();
+        if(!lista.isEmpty()){
+            return ResponseEntity.ok(lista);
+        }
+        return ResponseEntity.internalServerError().build();
+    }
 }

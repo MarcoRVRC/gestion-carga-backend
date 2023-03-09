@@ -1,36 +1,4 @@
-
 ---------------------SCRIPT DDL-----------------------------------------------------------------------------------
-
-create table if not exists sat_aduanas_gestion_electronica.ad_gec_tipo_catalogo
-(
-	id_tipo_catalogo integer generated always as identity(start with 1 increment by 1),
-	nombre varchar(16) not null,
-	login_creo varchar(10) not null,
-	fecha_creacion timestamp default current_timestamp,
-	fecha_modificacion timestamp default current_timestamp,
-	login_modifico varchar(10) not null,
-	constraint pk_tipo_catalogos primary key(id_tipo_catalogo)
-);
-
-create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos
-(
-	id_catalogo integer generated always 
-	as identity(start with 1 increment by 1),
-	nombre_catalogo varchar(255)not null,
-	descripcion_catalogo varchar(128)not null,
-	fecha_creacion timestamp default current_timestamp,
-	fecha_modificacion timestamp default current_timestamp,
-	login_creacion varchar(8),
-	login_modificacion varchar(8),
-	codigo_catalogo integer,
-	constraint pk_catalogos 
-	primary key(id_catalogo)
-);
-
-alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos  add constraint fk_tipo_catalogos
-foreign key(codigo_catalogo) references sat_aduanas_gestion_electronica.ad_gec_tipo_catalogo(id_tipo_catalogo)
-on update cascade on delete restrict;
-
 
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general --ad_gec_solicitudes_general
 (
@@ -44,7 +12,7 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 	nit_usuario_revision varchar(15), 
 	fecha_revision timestamp ,
 	codigo_aduana varchar(2)not null,
-	es_perecedero boolean not null, 
+	es_perecedero boolean not null default false, 
 	id_documento varchar(128),
 	constraint pk_solicitudes_general
 	primary key(id_solicitud_g)

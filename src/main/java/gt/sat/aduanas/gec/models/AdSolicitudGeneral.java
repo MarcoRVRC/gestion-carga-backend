@@ -42,7 +42,7 @@ public class AdSolicitudGeneral implements Serializable {
     @Column(name="fecha_revision")
     private Date fechaRevision;
 
-    @Column(name="es_perecedero", nullable=false)
+    @Column(name="es_perecedero", nullable=false, columnDefinition = "boolean not null default false")
     private boolean esPerecedero;
 
     @Column(name="codigo_aduana", nullable=false)

@@ -16,6 +16,7 @@ public class AdSolicitudMGServiceImpl implements AdSolicitudMGService {
 
     @Override
     public AdSolicitudMG guardar(AdSolicitudMG adSolicitudMG) {
+
         return adSolicitudMGRepository.save(adSolicitudMG);
     }
 
