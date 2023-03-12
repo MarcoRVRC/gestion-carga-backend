@@ -21,13 +21,13 @@ create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronic
 ---fk a estados
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
 add constraint fk_id_estado_sol_general foreign key(id_estado) 
-references aduanas_miad_general.ad_catalogos(id_catalogo);
+references sat_aduanas_miad_gen.ad_catalogos(id_catalogo);
 
 --fk referencia a tipo de solicitudes
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
 add constraint fk_catalogo_estado_solicitud 
 foreign key(tipo_solicitud) 
-references aduanas_miad_general.ad_catalogos(id_catalogo);
+references sat_aduanas_miad_gen.ad_catalogos(id_catalogo);
 
 create table if not exists sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_manifiesto_generado
 (
@@ -112,7 +112,7 @@ alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_bitacora_esta
 foreign key(id_solicitud_g) references sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general(id_solicitud_g);
 
 alter table sat_aduanas_gestion_electronica.ad_gestion_electronica_bitacora_estados add constraint fk_id_estado_bitacora
-foreign key(id_estado) references aduanas_miad_general.ad_catalogos(id_catalogo);
+foreign key(id_estado) references sat_aduanas_miad_gen.ad_catalogos(id_catalogo);
 
 
 --------------------------------------------------------
@@ -138,8 +138,6 @@ foreign key(id_estado) references aduanas_miad_general.ad_catalogos(id_catalogo)
 
 ------------------FUNCIONES----------------------------------------------------
 
-
------------OBTENER CORRELATIVO-------------------------------------------------
 -----------OBTENER CORRELATIVO-------------------------------------------------
 create or replace function sat_aduanas_gestion_electronica.generar_secuencia() RETURNS trigger
  LANGUAGE plpgsql
@@ -156,7 +154,7 @@ begin
 	select sg.tipo_solicitud
 	into V_TIPO
 	from sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general sg
-	inner join sat_aduanas_gestion_electronica.ad_gestion_electronica_catalogos ct on  sg.tipo_solicitud = ct.id_catalogo
+	inner join sat_aduanas_miad_gen.ad_catalogos ct on  sg.tipo_solicitud = ct.id_catalogo
 	where tipo_solicitud = NEW.tipo_solicitud;
 
 	IF V_TIPO = 1 then
@@ -168,6 +166,7 @@ begin
 			AND		(SELECT EXTRACT(YEAR FROM fecha_creacion)) = V_ANIO;
 		
 	ELSIF V_TIPO = 2 THEN
+	--SMG
 	    	SELECT 	COALESCE(MAX(correlativo), 0)
 			INTO	V_SECUENCIA
 			FROM 	sat_aduanas_gestion_electronica.ad_gestion_electronica_solicitudes_general
@@ -175,16 +174,12 @@ begin
 			AND		tipo_solicitud = NEW.tipo_solicitud
 			AND		(SELECT EXTRACT(YEAR FROM fecha_creacion)) = V_ANIO;
 
-	END IF;	
-
-		
+	END IF;			
 		NEW.correlativo := V_SECUENCIA + 1;
 			RETURN NEW;
-	-------
 	EXCEPTION
 		WHEN NO_DATA_FOUND THEN
 			V_SECUENCIA:= 0;
-		
 		NEW.correlativo := V_SECUENCIA + 1;
 		RETURN NEW;
 END;
